@@ -1,29 +1,31 @@
 import React, { useState } from "react";
-import loginService from "../../service/login/loginService";
+import registerService from "../../service/register/registerService";
 import { useHistory, Link } from "react-router-dom";
 import { FaLock } from "react-icons/fa";
 
-export default function Login() {
+export default function Register() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [name, setName] = useState();
   const [isError, setIsError] = useState(false);
   const [messageError, setMessageError] = useState("");
   const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const login = await loginService.getLogin({
+    const register = await registerService.getRegister({
       email,
       password,
+      name,
     });
-    console.log(login);
-    const loginFail = "errorCodes" in login;
-    if (!loginFail) {
+    console.log(register);
+    const registerFail = "errorCodes" in register;
+    if (!registerFail) {
       history.push("/");
     } else {
-      console.log(login.errorCodes[0].message);
+      console.log(register.errorCodes[0].message);
       setIsError(true);
-      setMessageError(login.errorCodes[0].message);
+      setMessageError(register.errorCodes[0].message);
     }
   };
 
@@ -34,11 +36,22 @@ export default function Login() {
           <div className="col-md-6 col-lg-4">
             <div className="card shadow">
               <div className="card-body">
-                <h3 className="card-title mb-4">Login</h3>
+                <h3 className="card-title mb-4">Register</h3>
                 <div className="alert-danger text-center">
                   {isError ? messageError : ""}
                 </div>
                 <form onSubmit={handleSubmit}>
+                  <div className="form-group">
+                    <label htmlFor="name">Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="name"
+                      placeholder="Enter name"
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
+                  </div>
                   <div className="form-group">
                     <label htmlFor="username">Username</label>
                     <input
@@ -75,14 +88,14 @@ export default function Login() {
                     </div>
                   </div>
                   <button type="submit" className="btn btn-primary btn-block">
-                    Login
+                    Register
                   </button>
                 </form>
                 <hr />
                 <p className="text-center">
-                  Don't have an account?
+                  Have an account?
                   <Link
-                    to="/register"
+                    to="/login"
                     style={{
                       color: "blue",
                       textDecoration: "underline",
@@ -91,7 +104,7 @@ export default function Login() {
                     }}
                   >
                     {" "}
-                    Sign up
+                    Login
                   </Link>
                 </p>
               </div>

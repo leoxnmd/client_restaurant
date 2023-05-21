@@ -1,4 +1,4 @@
-import { FaShoppingCart } from "react-icons/fa";
+import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
 import {
   Badge,
@@ -9,11 +9,13 @@ import {
   Nav,
   Navbar,
 } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
 import { CartState } from "../service/product/productContext";
 import "../styles.css";
 import { checkImage } from "../service/base/utils";
 import React, { useEffect, useState } from "react";
+import { decodeToken } from "../service/base/decodeToken";
+import signoutService from "../service/signout/signoutService";
 
 const Header = () => {
   const [imageUrl, setImageUrl] = useState("");
@@ -32,6 +34,25 @@ const Header = () => {
     };
     fetchImageUrls();
   }, []);
+
+  const [statusButtonLogin, setStatusButtonLogin] = useState(true);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const handleDropdownToggle = () => setShowDropdown(!showDropdown);
+  const [decodedToken, setDecodedToken] = useState({});
+  const history = useHistory();
+  useEffect(() => {
+    const decoded = decodeToken();
+    if (decoded) {
+      setStatusButtonLogin(false);
+      setDecodedToken(decoded);
+    }
+  }, []);
+  const handleSignOut = () => {
+    // Xử lý đăng xuất tại đây
+    console.log("Da dang xuat");
+    signoutService.getSignout();
+    history.push("/login");
+  };
 
   return (
     <Navbar bg="dark" variant="dark" style={{ height: 80 }}>
@@ -62,7 +83,6 @@ const Header = () => {
               <FaShoppingCart color="white" fontSize="25px" />
               <Badge>{cart.length}</Badge>
             </Dropdown.Toggle>
-
             <Dropdown.Menu style={{ minWidth: 370 }}>
               {cart.length > 0 ? (
                 <>
@@ -100,6 +120,30 @@ const Header = () => {
               )}
             </Dropdown.Menu>
           </Dropdown>
+          {statusButtonLogin ? (
+            <Link to="/login" style={{ margin: "0 30px" }}>
+              <Button>Login/Register</Button>
+            </Link>
+          ) : (
+            <Dropdown
+              alignRight
+              show={showDropdown}
+              onToggle={handleDropdownToggle}
+              style={{ margin: "0 30px" }}
+            >
+              <Dropdown.Toggle
+                variant="light"
+                id="user-dropdown"
+                className="d-flex align-items-center"
+              >
+                <FaUser size={20} />
+                <span className="ml-2">{decodedToken.name}</span>
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
         </Nav>
       </Container>
     </Navbar>
