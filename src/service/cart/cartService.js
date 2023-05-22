@@ -55,7 +55,7 @@ const getItemCart = async () => {
 };
 
 const order = async (order) => {
-    const response = await axios.post(`${base_url}order/staff`, order, config);
+    const response = await axios.post(`${base_url}order/`, order, config);
     return response;
 }
 
