@@ -4,12 +4,17 @@ import { AiFillDelete } from "react-icons/ai";
 import { CartState } from "../service/product/productContext";
 import { checkImage } from "../service/base/utils";
 import cartService from "../service/cart/cartService";
+import ModalNoti from "./ModalNoti";
 
 const Cart = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [total, setTotal] = useState();
   const [selectedItems, setSelectedItems] = useState([]);
   const [showDeleteButton, setShowDeleteButton] = useState(false);
+  const [orderId, setOrderId] = useState(undefined)
+
+  const [message, setMessage] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
     state: { cart },
@@ -66,6 +71,36 @@ const Cart = () => {
   };
 
 
+  console.log(selectedItems);
+
+  const handleOrder = async () => {
+    const orderData = { items: [] }
+    const selected = cart.filter(c => selectedItems.includes(c.id))
+    selected.map(p => {
+      orderData.items.push({
+        productId: p.id,
+        quantity: p.qty
+      })
+    })
+    const response = await cartService.order(orderData)
+    console.log('response is : ', response)
+    const mess = response.data.message
+    setIsModalOpen(true);
+    if (mess === "Success") {
+      setMessage(mess)
+      setOrderId(response.data.data.id)
+      dispatch({
+        type: "REMOVE_FROM_CART",
+        payload: selectedItems.map((itemId) => itemId),
+      })
+    }
+    else
+      setMessage(response.data.errorCodes[0].message)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="home">
@@ -128,6 +163,10 @@ const Cart = () => {
             </ListGroup.Item>
           ))}
         </ListGroup>
+        <div className="form-group">
+          <ModalNoti isOpen={isModalOpen} onRequestClose={handleCloseModal} message={message} />
+          <div id="orderId" hidden>{orderId}</div>
+        </div>
       </div>
       <div className="filters summary">
         <span className="title">Subtotal ({selectedItems.length}) items</span>
@@ -136,7 +175,7 @@ const Cart = () => {
           type="button"
           style={{ padding: "10px" }}
           disabled={selectedItems.length === 0}
-        // onClick={handleCheckout}
+          onClick={handleOrder}
         >
           Proceed to Checkout
         </Button>
