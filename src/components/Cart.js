@@ -15,6 +15,7 @@ const Cart = () => {
 
   const [message, setMessage] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [address, setAddress] = useState('')
 
   const {
     state: { cart },
@@ -74,7 +75,7 @@ const Cart = () => {
   console.log(selectedItems);
 
   const handleOrder = async () => {
-    const orderData = { items: [] }
+    const orderData = { address, items: [] }
     const selected = cart.filter(c => selectedItems.includes(c.id))
     selected.map(p => {
       orderData.items.push({
@@ -100,6 +101,7 @@ const Cart = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+  const handleAddress = (add)=>setAddress(add)
 
   return (
     <div className="home">
@@ -193,6 +195,9 @@ const Cart = () => {
             Delete selected item
           </Button>
         )}
+        <div style={{marginTop: "100px"}}>
+          <input class="form-control" style={{height:"100px"}} placeholder="Enter your address..." onChange={e=>handleAddress(e.target.value)} />
+        </div>
       </div>
     </div>
   );
