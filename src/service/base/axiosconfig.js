@@ -1,10 +1,10 @@
 const getTokenFromLocalStorage = localStorage.getItem('user')
-  ? localStorage.getItem('user')
+  ? JSON.parse(localStorage.getItem('user'))
   : null;
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbGllbnRAZ21haWwuY29tIiwiaWQiOjEyMSwibmFtZSI6Iktow6FjaCBow6BuZyIsInJvbGVzIjpbIkNVU1RPTUVSIl0sImlhdCI6MTY4NDY4ODA5OCwiZXhwIjoxNjg0Nzc0NDk4fQ.m165h5593S79xNjQVaUgWh8s1ZzVhn-hJqR1U3slUVo";
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJvd25lckBnbWFpbC5jb20iLCJpZCI6NjYsIm5hbWUiOiJDaOG7pyBj4butYSBow6BuZyIsInJvbGVzIjpbIk9XTkVSIl0sImlhdCI6MTY4NDcyOTU4NSwiZXhwIjoxNjg0ODE1OTg1fQ.qwDwB_4OFKR4XqI-7oJjvsb5ei2Nn6YlRA0uNcrXoZg";
 export const config = {
   headers: {
-    Authorization: `Bearer ${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage : token}`,
+    Authorization: `Bearer ${getTokenFromLocalStorage.token !== null ? getTokenFromLocalStorage.token : token}`,
     Accept: "application/json",
   },
 };

@@ -1,28 +1,30 @@
 import "./App.css";
 import Header from "./components/Header";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import Home from "./components/Home";
 import Cart from "./components/Cart";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 
 function App() {
+  const isLogin = localStorage.getItem('isLoggedIn');
+  console.log(isLogin);
   return (
     <BrowserRouter>
       <div className="App">
         <Switch>
-          <Route path="/login" exact>
+          <Route path="/" exact>
             <Login />
           </Route>
           <Route path="/register" exact>
             <Register />
           </Route>
-          <Route path="/">
+          <Route path="/home">
             <Header />
-            <Route path="/" exact>
+            <Route path="/home" exact>
               <Home />
             </Route>
-            <Route path="/cart">
+            <Route path="/home/cart">
               <Cart />
             </Route>
           </Route>
