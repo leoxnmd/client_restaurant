@@ -44,7 +44,7 @@ const SingleProduct = ({ prod }) => {
               onClick={() =>
                 dispatch({
                   type: "REMOVE_FROM_CART",
-                  payload: prod,
+                  payload: prod.id,
                 })
               }
             >
