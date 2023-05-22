@@ -3,9 +3,11 @@ import { CartState } from "../service/product/productContext";
 import { checkImage } from "../service/base/utils";
 import React, { useEffect, useState } from "react";
 import cartService from "../service/cart/cartService";
+import { useHistory } from "react-router-dom";
 
 const SingleProduct = ({ prod }) => {
   const [imageUrl, setImageUrl] = useState("");
+  const history = useHistory();
 
   const {
     state: { cart },
@@ -28,6 +30,15 @@ const SingleProduct = ({ prod }) => {
     };
     fetchData();
   }, [dispatch]);
+
+  function addCart(data) {
+    dispatch({
+      type: "ADD_TO_CART",
+      payload: data,
+    });
+    if (localStorage.getItem('user') === null)
+      history.push("/login");
+  }
 
   return (
     <div className="products">
@@ -53,10 +64,7 @@ const SingleProduct = ({ prod }) => {
           ) : (
             <Button
               onClick={() =>
-                dispatch({
-                  type: "ADD_TO_CART",
-                  payload: prod,
-                })
+                addCart(prod)
               }
               disabled={!prod.inStock}
             >
@@ -65,7 +73,7 @@ const SingleProduct = ({ prod }) => {
           )}
         </Card.Body>
       </Card>
-    </div>
+    </div >
   );
 };
 

@@ -10,15 +10,20 @@ export const cartReducer = (state, action) => {
       return { ...state, cart: action.payload };
 
     case "ADD_TO_CART":
-      const addedProduct = { ...action.payload, qty: 1 };
-      // Thêm sản phẩm vào giỏ hàng trong state
-      const updatedCart = [...state.cart, { ...addedProduct, productId: addedProduct.id, quantity: 1 }];
-      // Gửi yêu cầu Axios để thêm sản phẩm vào database
-      cartService.createItemCart({ productId: addedProduct.id, quantity: 1 }).then((res) => {
-        console.log("Thêm sản phẩm vào giỏ thành công");
-      });
-      // return { ...state, cart: [...state.cart, { ...action.payload, qty: 1 }] };
-      return { ...state, cart: updatedCart };
+      const updatedCart = [...state.cart, []];
+
+      if (localStorage.getItem('user') === null) {
+        return { ...state, cart: updatedCart };
+      } else {
+        const addedProduct = { ...action.payload, qty: 1 };
+        // Thêm sản phẩm vào giỏ hàng trong state
+        const updatedCart = [...state.cart, { ...addedProduct, productId: addedProduct.id, quantity: 1 }];
+        // Gửi yêu cầu Axios để thêm sản phẩm vào database
+        cartService.createItemCart({ productId: addedProduct.id, quantity: 1 }).then((res) => {
+          console.log("Thêm sản phẩm vào giỏ thành công");
+        });
+        return { ...state, cart: updatedCart };
+      }
 
     case "REMOVE_FROM_CART":
       // Tạo một mảng chứa các ID sản phẩm cần xóa

@@ -26,11 +26,20 @@ const delItemCart = async (ids) => {
 
 
 const getItemCart = async () => {
-    const response = await getCart();
-    const cart = await Promise.all(
-        response.map(async (item) => {
-            const productResponse = await getProducts();
-            const product = productResponse.find((p) => p.id === item.productId);
+    const productResponse = await getProducts();
+    const products = productResponse.reduce((obj, product) => {
+        obj[product.id] = product;
+        return obj;
+    }, {});
+    if (localStorage.getItem('user') === null) {
+        return [];
+    } else {
+        let response;
+        do {
+            response = await getCart();
+        } while (response === undefined);
+        const cart = response.map((item) => {
+            const product = products[item.productId];
             return {
                 id: item.productId,
                 name: product.name,
@@ -40,16 +49,23 @@ const getItemCart = async () => {
                 qty: item.quantity,
             };
         })
-    );
-    return cart;
+        return cart;
+    }
+
 };
+
+const order = async (order) => {
+    const response = await axios.post(`${base_url}order/staff`, order, config);
+    return response;
+}
 
 const cartService = {
     createItemCart,
     getCart,
     updateItemCart,
     getItemCart,
-    delItemCart
+    delItemCart,
+    order
 };
 
 export default cartService;

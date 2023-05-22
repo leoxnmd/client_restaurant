@@ -83,7 +83,6 @@ const Cart = () => {
       })
     })
     const response = await cartService.order(orderData)
-    console.log('response is : ', response)
     const mess = response.data.message
     setIsModalOpen(true);
     if (mess === "Success") {

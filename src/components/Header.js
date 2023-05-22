@@ -40,18 +40,24 @@ const Header = () => {
   const handleDropdownToggle = () => setShowDropdown(!showDropdown);
   const [decodedToken, setDecodedToken] = useState({});
   const history = useHistory();
+
   useEffect(() => {
     const decoded = decodeToken();
     if (decoded) {
       setStatusButtonLogin(false);
       setDecodedToken(decoded);
+    } else {
+      setDecodedToken('');
     }
   }, []);
   const handleSignOut = () => {
     // Xử lý đăng xuất tại đây
     console.log("Da dang xuat");
+    setStatusButtonLogin(true);
     signoutService.getSignout();
-    history.push("/login");
+    history.push("/");
+    window.location.reload();
+
   };
 
   return (
@@ -81,10 +87,11 @@ const Header = () => {
           <Dropdown alignRight>
             <Dropdown.Toggle variant="success">
               <FaShoppingCart color="white" fontSize="25px" />
-              <Badge>{cart.length}</Badge>
+              <Badge>{decodedToken ? (cart.length) : 0}
+              </Badge>
             </Dropdown.Toggle>
             <Dropdown.Menu style={{ minWidth: 370 }}>
-              {cart.length > 0 ? (
+              {decodedToken ? (
                 <>
                   {cart.map((prod, index) => (
                     <span className="cartitem" key={prod.id}>

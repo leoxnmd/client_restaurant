@@ -19,7 +19,9 @@ export default function Login() {
     console.log(login);
     const loginFail = "errorCodes" in login;
     if (!loginFail) {
-      history.push("/home");
+      history.push("/");
+      window.location.reload();
+
     } else {
       console.log(login.errorCodes[0].message);
       setIsError(true);
