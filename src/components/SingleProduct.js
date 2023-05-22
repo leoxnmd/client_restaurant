@@ -2,24 +2,32 @@ import { Card, Button } from "react-bootstrap";
 import { CartState } from "../service/product/productContext";
 import { checkImage } from "../service/base/utils";
 import React, { useEffect, useState } from "react";
+import cartService from "../service/cart/cartService";
 
 const SingleProduct = ({ prod }) => {
   const [imageUrl, setImageUrl] = useState("");
 
+  const {
+    state: { cart },
+    dispatch,
+  } = CartState();
+
   useEffect(() => {
     checkImageUrl();
-  }, []);
+  }, [prod]);
 
   const checkImageUrl = async () => {
     const checkedUrl = await checkImage(prod.image);
     setImageUrl(checkedUrl);
   };
 
-
-  const {
-    state: { cart },
-    dispatch,
-  } = CartState();
+  useEffect(() => {
+    const fetchData = async () => {
+      const cart = await cartService.getItemCart();
+      dispatch({ type: "SET_CART", payload: cart });
+    };
+    fetchData();
+  }, [dispatch]);
 
   return (
     <div className="products">

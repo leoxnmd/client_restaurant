@@ -3,9 +3,13 @@ import { Button, Col, Form, Image, ListGroup, Row } from "react-bootstrap";
 import { AiFillDelete } from "react-icons/ai";
 import { CartState } from "../service/product/productContext";
 import { checkImage } from "../service/base/utils";
+import cartService from "../service/cart/cartService";
+
 const Cart = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [total, setTotal] = useState();
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
 
   const {
     state: { cart },
@@ -19,12 +23,49 @@ const Cart = () => {
       );
       setImageUrl(checkedUrls);
     };
-
     fetchImageUrls();
-    setTotal(
-      cart.reduce((acc, curr) => acc + Number(curr.price) * curr.qty, 0)
-    );
-  }, [cart]);
+
+    if (selectedItems.length > 0) {
+      setTotal(
+        cart.reduce((acc, curr) => {
+          if (selectedItems.includes(curr.id)) {
+            return acc + Number(curr.price) * curr.qty;
+          }
+          return acc;
+        }, 0)
+      );
+    } else {
+      setTotal(0);
+    }
+  }, [cart, selectedItems]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const cart = await cartService.getItemCart();
+      dispatch({ type: "SET_CART", payload: cart });
+    };
+    fetchData();
+  }, [dispatch]);
+
+  const handleItemSelect = (productId, product) => {
+    let updatedSelectedItems;
+
+    if (selectedItems.includes(productId)) {
+      updatedSelectedItems = selectedItems.filter((id) => id !== productId);
+    } else {
+      updatedSelectedItems = [...selectedItems, productId];
+    }
+
+    setSelectedItems(updatedSelectedItems);
+
+    if (updatedSelectedItems.length >= 1) {
+      setShowDeleteButton(true);
+    } else {
+      setShowDeleteButton(false);
+    }
+  };
+
+
 
   return (
     <div className="home">
@@ -33,6 +74,13 @@ const Cart = () => {
           {cart.map((prod, index) => (
             <ListGroup.Item key={prod.id}>
               <Row>
+                <Col md={1}>
+                  <Form.Check
+                    type="checkbox"
+                    checked={selectedItems.includes(prod.id)}
+                    onChange={() => handleItemSelect(prod.id)}
+                  />
+                </Col>
                 <Col md={2}>
                   <Image style={{ width: '500px', height: '150px', objectFit: 'cover' }}
                     src={imageUrl[index]}
@@ -69,7 +117,7 @@ const Cart = () => {
                     onClick={() =>
                       dispatch({
                         type: "REMOVE_FROM_CART",
-                        payload: prod,
+                        payload: prod.id,
                       })
                     }
                   >
@@ -82,11 +130,31 @@ const Cart = () => {
         </ListGroup>
       </div>
       <div className="filters summary">
-        <span className="title">Subtotal ({cart.length}) items</span>
+        <span className="title">Subtotal ({selectedItems.length}) items</span>
         <span style={{ fontWeight: 700, fontSize: 20 }}>Total: {total} VND</span>
-        <Button type="button" disabled={cart.length === 0}>
+        <Button
+          type="button"
+          style={{ padding: "10px" }}
+          disabled={selectedItems.length === 0}
+        // onClick={handleCheckout}
+        >
           Proceed to Checkout
         </Button>
+        {showDeleteButton && (
+          <Button
+            variant="danger"
+            className="mt-3 mx-auto"
+            style={{ padding: "10px" }}
+            onClick={() =>
+              dispatch({
+                type: "REMOVE_FROM_CART",
+                payload: selectedItems.map((itemId) => itemId),
+              })
+            }
+          >
+            Delete selected item
+          </Button>
+        )}
       </div>
     </div>
   );

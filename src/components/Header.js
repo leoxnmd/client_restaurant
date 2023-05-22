@@ -31,7 +31,7 @@ const Header = () => {
       setImageUrl(checkedUrls);
     };
     fetchImageUrls();
-  }, []);
+  }, [cart]);
 
   return (
     <Navbar bg="dark" variant="dark" style={{ height: 80 }}>
@@ -83,7 +83,7 @@ const Header = () => {
                         onClick={() =>
                           dispatch({
                             type: "REMOVE_FROM_CART",
-                            payload: prod,
+                            payload: prod.id,
                           })
                         }
                       />
