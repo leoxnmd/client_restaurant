@@ -13,18 +13,18 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <Switch>
-          <Route path="/" exact>
+          <Route path="/login" exact>
             <Login />
           </Route>
           <Route path="/register" exact>
             <Register />
           </Route>
-          <Route path="/home">
+          <Route path="/">
             <Header />
-            <Route path="/home" exact>
+            <Route path="/" exact>
               <Home />
             </Route>
-            <Route path="/home/cart">
+            <Route path="/cart">
               <Cart />
             </Route>
           </Route>
