@@ -1,5 +1,6 @@
 import { Button, Form } from "react-bootstrap";
 import { CartState } from "../service/product/productContext";
+import { Link } from "react-router-dom";
 
 const Filters = () => {
   const {
@@ -70,6 +71,9 @@ const Filters = () => {
       >
         Clear Filters
       </Button>
+      <Link to="/history" style={{marginTop: "20px"}}>
+        <Button>History Transaction</Button>
+      </Link>
     </div>
   );
 };
