@@ -93,6 +93,7 @@ const Cart = () => {
         type: "REMOVE_FROM_CART",
         payload: selectedItems.map((itemId) => itemId),
       })
+      setShowDeleteButton(false);
     }
     else
       setMessage(response.data.errorCodes[0].message)
@@ -175,7 +176,7 @@ const Cart = () => {
         <Button
           type="button"
           style={{ padding: "10px" }}
-          disabled={selectedItems.length === 0}
+          disabled={selectedItems.length === 0 || address.trim().length === 0}
           onClick={handleOrder}
         >
           Proceed to Checkout
